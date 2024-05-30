@@ -1,0 +1,38 @@
+Programación lineal (ideas para el proyecto):
+
+Meta principal: el programa debe poder recibir
+los datos de la función objetivo e interpretar el qué tipo
+de algoritmo va a realizar para optimizar la función
+basado en las restricciones a las que es sujeta la función.
+Además de ir mostrando las distintas iteraciones de los
+métodos de optimización (simplex, gran M, dos fases, etc).
+
+Ideas para refactorizar el código después:
+Implementar dos clases:
+1. Una clase que contenga la función objetivo (func_obj).
+2. Una clase dentro de función objetivo que contenga las restricciones (constraint).
+
+En la clase se añaden los detalles triviales de la función
+objetivo, y un par de enums USAR_MÉTODO y TIPO_SOLUCIÓN
+(los nombres describen para qué los vamos a usar lmao).
+
+Una idea que tengo para los posibles parámetros que puedan tener es:
+
+
+class func_obj{
+//atributos
+private:
+  std::vector<float> coefficient; //contiene los coeficientes de la función objetivo.
+  class restr{
+   std::vector<std::vector<float>> restricciones; //contiene las restricciones a la función objetivo.
+  };
+  enum usar_método{
+  Gráfico, Simplex, Gran_M, Dos_Fases
+  }; //la idea es pasar el enum de parámetro al parser, para determinar qué método se va a aplicar para optimizar la función.
+  enum tipo_solución{óptima, óptima_única, óptima_múltiple, degenerada}; //añadir más de ser necesario.
+  void parseInput(std::string descr);
+  bool esDeg();
+};
+
+//se nota a leguas lo acostumbrado que estoy a C/C++
+//ya después se adapta ésto a Julia.
