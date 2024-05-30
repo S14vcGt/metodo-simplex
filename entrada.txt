@@ -1,0 +1,8 @@
+Funcion Objetivo:
+MAX Z=2x_1+5x_2+8x_3
+
+Sujeta a:
+x_1, x_2, x_3>=0 (automaticamente modelada)
+x_1+x_2+x_3<=12
+8X_1-4x_2+4x_3<=24
+x_2+x_3<=8
