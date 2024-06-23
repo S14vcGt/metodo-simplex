@@ -10,7 +10,7 @@ function transpuesta(l)
     return final
 end
 
-function parseEntrada(path="entrada.txt")
+function parseEntrada(path="entrada.tex")
     tabla = []
     for line in eachline(path)
         if !occursin(r"uj|au|un", line)
@@ -44,7 +44,7 @@ function Max_simplex(table, columna_pivote, solucion_textual=Set(["Solución óp
     end
     fila_pivote += 1
     global nextable = fill([0.0], length(table))
-    nextable[fila_pivote] = (1 / table_no_function[fila_pivote-1][columna_pivote])table_no_function[fila_pivote-1]
+    nextable[fila_pivote] = (1 / table[fila_pivote][columna_pivote])table[fila_pivote]
     for i in eachindex(nextable)
         if (i != fila_pivote)
             nextable[i] = -table[i][columna_pivote] * nextable[fila_pivote] + table[i]
@@ -95,5 +95,5 @@ parseEntrada()
 #trans = transpuesta(table)
 #println(trans)
 #println(map((x) -> isBasic(x), trans))
-Max_simplex(table2, argmin(table2[1]))#falta manejar soluciones multiples y ciclos degenerados ?como identificar un ciclo degenerado
+Max_simplex(table, argmin(table[1]))#falta manejar soluciones multiples y ciclos degenerados ?como identificar un ciclo degenerado
 # se debe pasar como parametro el indice de la vaiable de entrada para poder manejar soluciones multiples
