@@ -21,9 +21,11 @@ tabla2 = [
     [0, 1, 1, 2, 0, 1, 0, 600],
     [0, 2, 3, 5, 0, 0, 1, 1500]
 ]
-prueba = Solver.Solucion(tabla2, Set(["Solución óptima"]), argmin(tabla2[1]))
+prueba = Solver.Solucion(tabla2, Set(["Solución óptima"]), argmin(tabla2[1]), Set())
 solucion = Solver.maximizar(prueba)
-final = join(solucion.Textual)
+final = join(solution.Textual)
+#solucion = Solver.redondear(solution)
+Output.escribirTablaIntermedia(solucion.Historial)
 Output.escribirTablaFinal(solucion.Tabular)
 Output.escribirSolucion(final)
 

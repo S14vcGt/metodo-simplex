@@ -14,5 +14,11 @@ function parseEntrada(path="entrada.tex")
     end
     return tabla
 end
-
 end
+function hor()
+    next = [1, 2, 3]
+    sol = Set([[1, 2, 3]])
+    push!(sol, [4, 5, 6])
+    print("$(next ∈ sol)")
+end
+hor()

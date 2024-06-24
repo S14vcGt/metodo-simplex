@@ -1,11 +1,12 @@
 module Solver
 struct Solucion
     Tabular::Vector{Vector{Float64}}
-    Textual::Set
+    Textual::Set{String}
     ColumnaPivote::Integer
+    Historial::Set{Vector{Vector{Float64}}}
 end
 
-function maximizar(sol::Solucion, iter=1)
+function maximizar(sol::Solucion)
 
     global table_no_function = sol.Tabular[2:end]# primero elimino la fila de la funcion objetivo
     global min = 1e10
@@ -29,7 +30,7 @@ function maximizar(sol::Solucion, iter=1)
 
     fila_pivote += 1
     global nextable = fill([0.0], length(sol.Tabular))
-    nextable[fila_pivote] = (1 / sol.Tabular[fila_pivote][sol.ColumnaPivote])sol.Tabular[fila_pivote]
+    nextable[fila_pivote] = (1 / sol.Tabular[fila_pivote][sol.ColumnaPivote]) * sol.Tabular[fila_pivote]
 
     for i in eachindex(nextable)
         if (i != fila_pivote)
@@ -39,27 +40,29 @@ function maximizar(sol::Solucion, iter=1)
 
     # se aplica la condicion de optimalidad
     if minimum(nextable[1]) < 0
-        escribirTablaIntermedia(nextable, iter)
-        maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1])), iter + 1)
+        push!(sol.Historial, nextable)
+        maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial))
     else
         noBasicas = map((x) -> isNoBasic(x), transpuesta(nextable))
         for i in eachindex(nextable[1])
             if noBasicas[i] && nextable[1][i] == 0# si es multiple...
-                push!(sol.Textual, " múltiple")
-                printstyled("\nsolución encontrada:\n"; color=:cyan, bold=true)
-                for i in eachindex(nextable)
-                    printstyled("$(nextable[i])\n"; color=:light_cyan)
-                end
-                if iter ≤ 50
-                    return maximizar(Solucion(nextable, sol.Textual, i), iter + 1)
+                if nextable ∉ sol.Historial
+                    push!(sol.Textual, " múltiple")
+                    printstyled("\nsolución encontrada:\n"; color=:cyan, bold=true)
+                    for i in eachindex(nextable)
+                        printstyled("$(nextable[i])\n"; color=:light_cyan)
+                    end
+                    println("$(nextable ∉ sol.Historial)")
+                    push!(sol.Historial, nextable)
+                    return maximizar(Solucion(nextable, sol.Textual, i, sol.Historial))
                 else
-                    return Solucion(nextable, sol.Textual, i)
+                    return Solucion(nextable, sol.Textual, i, sol.Historial)
                 end
             end
         end
 
         " múltiple." ∉ sol.Textual ? push!(sol.Textual, " única.") : 0
-        return Solucion(nextable, sol.Textual, iter)
+        return Solucion(nextable, sol.Textual, sol.ColumnaPivote, sol.Historial)
     end
 end
 
@@ -76,11 +79,18 @@ function transpuesta(l)
     return final
 end
 
-function escribirTablaIntermedia(nextable::Vector{Vector{Float64}}, iter::Integer)
-    printstyled("\n Tabla $iter \n"; color=:blue)
-    for i in eachindex(nextable)
-        printstyled("$(nextable[i])\n"; color=:light_blue)
-    end
-end
 #una funcion para minimizar
+function redondear(sol::Solucion)
+    # que redondee cada numero en cada vector dentro de cada vector dentro del vector de la tabla
+    tablasIntermedias::Set{Vector{Vector{Float16}}} = Set([])
+    foreach((tabla) -> push!(tablasIntermedias, cadaFila(tabla)), sol.Historial)
+
+    tabular = map((fila) -> map((coeficiente) -> convert(Float16, coeficiente), fila), sol.Tabular)
+
+    (Tabular=tabular, Historial=tablasIntermedias)
+end
+
+function cadaFila(tabla::Vector{Vector{Float64}})
+    map((fila) -> map((coeficiente) -> convert(Float16, coeficiente), fila), tabla)
+end
 end
