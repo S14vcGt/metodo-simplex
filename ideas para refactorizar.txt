@@ -7,6 +7,9 @@ basado en las restricciones a las que es sujeta la función.
 Además de ir mostrando las distintas iteraciones de los
 métodos de optimización (simplex, gran M, dos fases, etc).
 
+quiza agregar otro campo a Solucion que lleve un registro de todas las tablas generadas, 
+asi se soluciona el ciclaje y vuelve mas pura la funcion
+
 Ideas para refactorizar el código después:
 Implementar dos clases:
 1. Una clase que contenga la función objetivo (func_obj).
