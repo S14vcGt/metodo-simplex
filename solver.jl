@@ -5,9 +5,7 @@ struct Solucion
     ColumnaPivote::Integer
     Historial::Set{Vector{Vector{Float64}}}
 end
-
-function maximizar(sol::Solucion)
-
+function obtenerFilaPivote(sol::Solucion)
     global table_no_function = sol.Tabular[2:end]# primero elimino la fila de la funcion objetivo
     global min = 1e10
     global fila_pivote = 0
@@ -22,6 +20,11 @@ function maximizar(sol::Solucion)
             end
         end
     end
+
+end
+function maximizar(sol::Solucion)
+
+    global fila_pivote = obtenerFilaPivote(sol)
 
     if fila_pivote == 0
         sol.Textual = Set(["Solución no acotada"])
@@ -51,7 +54,7 @@ function maximizar(sol::Solucion)
                     printstyled("\nsolución encontrada:\n"; color=:cyan, bold=true)
                     for i in eachindex(nextable)
                         printstyled("$(nextable[i])\n"; color=:light_cyan)
-                    end
+                    end# aqui lo que sucede es que no se da cuenta de que encontro la solucion y solo se detiene hasta la solucion ya se incluyo
                     println("$(nextable ∉ sol.Historial)")
                     push!(sol.Historial, nextable)
                     return maximizar(Solucion(nextable, sol.Textual, i, sol.Historial))
