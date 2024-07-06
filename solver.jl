@@ -1,19 +1,23 @@
 module Solver
+
+export Solucion, maximizar, redondear
+
 struct Solucion
     Tabular::Vector{Vector{Float64}}
     Textual::Set{String}
     ColumnaPivote::Integer
     Historial::Set{Vector{Vector{Float64}}}
 end
+
 function obtenerFilaPivote(sol::Solucion)
-    global table_no_function = sol.Tabular[2:end]# primero elimino la fila de la funcion objetivo
+    global table_no_function = sol.Tabular[2:end] # primero elimino la fila de la funcion objetivo
     global min = 1e10
     global fila_pivote = 0
 
     for i in eachindex(table_no_function)
         if table_no_function[i][sol.ColumnaPivote] > 0
-            actual = table_no_function[i][end] / table_no_function[i][sol.ColumnaPivote]#aplico la prueba del conciente minimo
-            actual == min ? push!(sol.Textual, " degenerada") : 0#si alguno de los valores resultantes es igual al minino guardado, es degenerada
+            actual = table_no_function[i][end] / table_no_function[i][sol.ColumnaPivote] # aplico la prueba del cociente mínimo
+            actual == min ? push!(sol.Textual, " degenerada") : 0 # si alguno de los valores resultantes es igual al mínimo guardado, es degenerada
             if actual ≤ min
                 min = actual
                 fila_pivote = i
@@ -22,8 +26,8 @@ function obtenerFilaPivote(sol::Solucion)
     end
     return fila_pivote
 end
-function maximizar(sol::Solucion)
 
+function maximizar(sol::Solucion, iter=1)
     global fila_pivote = obtenerFilaPivote(sol)
 
     if fila_pivote == 0
@@ -41,25 +45,29 @@ function maximizar(sol::Solucion)
         end
     end
 
-    # se aplica la condicion de optimalidad
+    # Se aplica la condición de optimalidad
     if minimum(nextable[1]) < 0
         push!(sol.Historial, nextable)
-        maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial))
+        return maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial), iter + 1)
     else
         noBasicas = map((x) -> isNoBasic(x), transpuesta(nextable))
+        multiples = 0
         for i in eachindex(nextable[1])
-            if noBasicas[i] && nextable[1][i] == 0# si es multiple...
-                if nextable ∉ sol.Historial
-                    push!(sol.Textual, " múltiple")
-                    printstyled("\nsolución encontrada:\n"; color=:cyan, bold=true)
-                    for i in eachindex(nextable)
-                        printstyled("$(nextable[i])\n"; color=:light_cyan)
-                    end# aqui lo que sucede es que no se da cuenta de que encontro la solucion y solo se detiene hasta la solucion ya se incluyo
-                    println("$(nextable ∉ sol.Historial)")
-                    push!(sol.Historial, nextable)
-                    return maximizar(Solucion(nextable, sol.Textual, i, sol.Historial))
-                else
-                    return Solucion(nextable, sol.Textual, i, sol.Historial)
+            if noBasicas[i] && nextable[1][i] == 0
+                multiples += 1
+                if multiples > 1
+                    if nextable ∉ sol.Historial
+                        push!(sol.Textual, " múltiple")
+                        printstyled("\nsolución encontrada:\n"; color=:cyan, bold=true)
+                        for j in eachindex(nextable)
+                            printstyled("$(nextable[j])\n"; color=:light_cyan)
+                        end
+                        println("$(nextable ∉ sol.Historial)")
+                        push!(sol.Historial, nextable)
+                        return maximizar(Solucion(nextable, sol.Textual, i, sol.Historial), iter + 1)
+                    else
+                        return Solucion(nextable, sol.Textual, i, sol.Historial)
+                    end
                 end
             end
         end
@@ -82,9 +90,7 @@ function transpuesta(l)
     return final
 end
 
-#una funcion para minimizar
 function redondear(sol::Solucion)
-    # que redondee cada numero en cada vector dentro de cada vector dentro del vector de la tabla
     tablasIntermedias::Set{Vector{Vector{Float16}}} = Set([])
     foreach((tabla) -> push!(tablasIntermedias, cadaFila(tabla)), sol.Historial)
 
@@ -96,4 +102,5 @@ end
 function cadaFila(tabla::Vector{Vector{Float64}})
     map((fila) -> map((coeficiente) -> convert(Float16, coeficiente), fila), tabla)
 end
+
 end
