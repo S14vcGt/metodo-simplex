@@ -20,7 +20,7 @@ function obtenerFilaPivote(sol::Solucion)
             end
         end
     end
-
+    return fila_pivote
 end
 function maximizar(sol::Solucion)
 
