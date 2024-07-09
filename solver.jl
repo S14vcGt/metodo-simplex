@@ -7,14 +7,14 @@ struct Solucion
     Historial::Set{Vector{Vector{Float64}}}
 end
 
-function getSolucion(table::Vector, op::Bool)
+function getSolucion(table::Vector, op::Bool, texto::Set{String}=Set(["Solución óptima"]), historial::Set{Vector}=Set())
     fx = 0
     if op
         fx = (x::Vector) -> argmin(x)
     else #! todavia no sirve, se debe indagar sobre minimizacion con simplex
         fx = (x::Vector) -> argmax(x[2:end]) + 1 # se le suma 1 porque no se toma en cuenta el indice de
     end                                          # la columna de la funcion objetivo
-    return Solucion(table, Set(["Solución óptima"]), fx(table[1]), Set())
+    return Solucion(table, texto, fx(table[1]), historial)
 end
 
 function obtenerFilaPivote(sol::Solucion)
