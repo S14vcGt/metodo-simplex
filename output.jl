@@ -1,5 +1,4 @@
 module Output
-
 function escribirSolucion(sol::String)
     printstyled("\n $sol \n"; color=:light_green, bold=true)
 end

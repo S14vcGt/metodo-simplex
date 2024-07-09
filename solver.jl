@@ -5,6 +5,15 @@ struct Solucion
     ColumnaPivote::Integer
     Historial::Set{Vector{Vector{Float64}}}
 end
+function getSolucion(table::Vector, op::Bool)
+    fx = 0
+    if (op)
+        fx = (x::Vector) -> argmin(x)
+    else#!todavia no sirve, se debe indagar sobre minimizacion con simplex
+        fx = (x::Vector) -> argmax(x[2:end]) + 1# se le suma 1 porque no se toma en cuenta el indice de
+    end                                         #la columna de la funcion objetivo
+    return Solucion(table, Set(["Solución óptima"]), fx(table[1]), Set())
+end
 function obtenerFilaPivote(sol::Solucion)
     global table_no_function = sol.Tabular[2:end]# primero elimino la fila de la funcion objetivo
     global min = 1e10

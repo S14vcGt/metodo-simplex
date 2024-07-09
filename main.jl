@@ -33,15 +33,16 @@ function datos_prueba()
         [0, (5 / 6), 1, (2 / 6), (1 / 6), 0, 0, 5],
         [0, (4 / 3), 0, (4 / 3), (-1 / 3), 1, 0, 5],
         [0, (-8 / 3), 0, (1 / 3), (-1 / 3), 0, 1, 0]]
-    return tabla4
+    return tabla
 end
 
 test = datos_prueba()
-prueba = Solver.Solucion(test, Set(["Solución óptima"]), argmin(test[1]), Set())
-solucion = Solver.maximizar(prueba)
-final = join(solucion.Textual)
+prueba = Solver.getSolucion(test, false)
+print(`$(prueba.ColumnaPivote)`)
+#solucion = Solver.maximizar(prueba)
+#final = join(solucion.Textual)
 #solucion = Solver.redondear(solution)
-Output.escribirTablaIntermedia(solucion.Historial)
-Output.escribirTablaFinal(solucion.Tabular)
-Output.escribirSolucion(final)
+#Output.escribirTablaIntermedia(solucion.Historial)
+#Output.escribirTablaFinal(solucion.Tabular)
+#Output.escribirSolucion(final)
 
