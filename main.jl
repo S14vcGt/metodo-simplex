@@ -4,11 +4,11 @@ import .Solver, .Output
 
 # una interfaz de linea de comandos que le pregunte cual es la entrada
 #por terminal
-#por archivo tex
+#por archivo csv
 
 #elija la salida
 #por terminal
-#en archivo tex
+#en archivo csv
 function datos_prueba()
     tabla = [
         [1, -2, -5, -8, 0, 0, 0, 0],

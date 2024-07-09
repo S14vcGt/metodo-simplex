@@ -9,7 +9,7 @@ end
 
 function getSolucion(table::Vector, op::Bool)
     fx = 0
-    if (op)
+    if op
         fx = (x::Vector) -> argmin(x)
     else #! todavia no sirve, se debe indagar sobre minimizacion con simplex
         fx = (x::Vector) -> argmax(x[2:end]) + 1 # se le suma 1 porque no se toma en cuenta el indice de
@@ -54,10 +54,10 @@ function maximizar(sol::Solucion)
     end
 
     # Se aplica la condición de optimalidad
-    if minimum(nextable[1]) < 0
+    if minimum(nextable[1]) < 0 #? esta funcion se puede pasar como un parametro
         push!(sol.Historial, nextable)
-        return maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial))
-    else
+        return maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial)) #? esto se resuelve con getSolucion y
+    else                                                                                      #? se pasa el bool como parametro
         noBasicas = map((x) -> isNoBasic(x), transpuesta(nextable))
         for i in eachindex(nextable[1])
             if noBasicas[i] && nextable[1][i] == 0
