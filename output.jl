@@ -1,4 +1,5 @@
 module Output
+#todo si son 1 o 2 variables, que se grafique
 function escribirSolucion(sol::String)
     printstyled("\n $sol \n"; color=:light_green, bold=true)
 end

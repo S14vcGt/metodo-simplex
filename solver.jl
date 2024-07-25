@@ -7,9 +7,9 @@ struct Solucion
     Historial::Set{Vector{Vector{Float64}}}
 end
 
-function getSolucion(table::Vector, op::Bool, texto::Set{String}=Set(["Solución óptima"]), historial::Set{Vector}=Set())
+function getSolucion(table::Vector, maximizar::Bool, texto::Set{String}=Set(["Solución óptima"]), historial::Set{Vector}=Set())
     fx = 0
-    if op
+    if maximizar
         fx = (x::Vector) -> argmin(x)
     else #! todavia no sirve, se debe indagar sobre minimizacion con simplex
         fx = (x::Vector) -> argmax(x[2:end]) + 1 # se le suma 1 porque no se toma en cuenta el indice de
