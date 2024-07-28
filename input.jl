@@ -3,6 +3,8 @@ module Input
 function parseEntrada(path="entrada.txt")
     entrada = []
     dos_fases::Bool
+    maximizar::Bool
+
     for line in eachline(path)
         append!(entrada, [split(line, ',')])
     end
@@ -15,6 +17,14 @@ function parseEntrada(path="entrada.txt")
                     end, x), entrada)
 
     funcion_objetivo = popfirst!(restricciones)
+
+    op = popfirst!(funcion_objetivo)
+    if op == "MAX"
+        maximizar = true
+    elseif op == "MIN"
+        maximizar == false
+    end
+
     soluciones = map(x -> popat!(x, lastindex(x)), restricciones)
     pushfirst!(soluciones, 0)
 
@@ -25,7 +35,7 @@ function parseEntrada(path="entrada.txt")
     if isempty(eres)
         dos_fases = false
         for i in eachindex(coeficientes)
-            coeficientes[i][1] = funcion_objetivo[i]
+            coeficientes[i][1] = -funcion_objetivo[i]
         end
 
     else
@@ -38,9 +48,10 @@ function parseEntrada(path="entrada.txt")
     append!(coeficientes, holguras, eres, [soluciones])
     final = transpuesta(coeficientes)
 
-    return (dos_fases, funcion_objetivo, final)
+    return (dos_fases, maximizar, final, funcion_objetivo)
 end
-function agregarR(restricciones)# si no hay eres el programa debe saber que no debe normalizar otra vez para resolver
+
+function agregarR(restricciones)
     resolve = []
 
     for i in eachindex(restricciones)

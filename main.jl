@@ -46,7 +46,7 @@ function dosFases()
     solucion::Solver.Solucion
     test::Tuple = Input.parseEntrada()
     if !test[1]
-        prueba = Solver.getSolucion(test, false)
+        prueba = Solver.getSolucion(test[3], test[2])
         print(`$(prueba.ColumnaPivote)`)#todo quitar
         solucion = Solver.maximizar(prueba)
     else
