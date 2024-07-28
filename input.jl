@@ -37,18 +37,22 @@ function parseEntrada(path="entrada.txt")
         for i in eachindex(coeficientes)
             coeficientes[i][1] = -funcion_objetivo[i]
         end
-
-    else
-        dos_fases = true
-        fila_objetivo::Vector{Int} = [0 for _ in 1:(length(restricciones)+1)]
-        fila_objetivo[1] = 1
-        pushfirst!(coeficientes, fila_objetivo)
     end
+
+    agregarColumnaObjetivo(coeficientes)
 
     append!(coeficientes, holguras, eres, [soluciones])
     final = transpuesta(coeficientes)
 
     return (dos_fases, maximizar, final, funcion_objetivo)
+end
+
+function agregarColumnaObjetivo(coeficientes)
+
+    columnaObjetivo::Vector{Int} = [0 for _ in 1:(length(coeficientes[1]))]
+    fila_objetivo[1] = 1
+    pushfirst!(coeficientes, columnaObjetivo)
+
 end
 
 function agregarR(restricciones)
