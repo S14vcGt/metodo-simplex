@@ -17,6 +17,10 @@ function getSolucion(table::Vector, maximizar::Bool, texto::Set{String}=Set(["So
     return Solucion(table, texto, fx(table[1]), historial)
 end
 
+function normalizarNegativos()
+
+end
+
 function obtenerFilaPivote(sol::Solucion)
     global table_no_function = sol.Tabular[2:end] # primero elimino la fila de la funcion objetivo
     global min = 1e10

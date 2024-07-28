@@ -42,26 +42,21 @@ function datos_prueba()
     ]
     return tabla5
 end
-function tres_pr(table)
-    return map((x) -> x[1:3], table)
+function dosFases()
+    solucion::Solver.Solucion
+    test::Tuple = Input.parseEntrada()
+    if !test[1]
+        prueba = Solver.getSolucion(test, false)
+        print(`$(prueba.ColumnaPivote)`)#todo quitar
+        solucion = Solver.maximizar(prueba)
+    else
 
+    end
+    final = join(solucion.Textual)
+    #solucion = Solver.redondear(solution)#todo no necesario
+    Output.escribirTablaIntermedia(solucion.Historial)
+    Output.escribirTablaFinal(solucion.Tabular)
+    Output.escribirSolucion(final)
 end
-test = tres_pr(datos_prueba())
-aux = Solver.transpuesta(test)
-holguras = [[0, 0, -1, 0], [0, 0, 0, 1]]
-eres = [[-1, 1, 0, 0], [-1, 0, 1, 0]]
-soluciones = [[0, 3, 6, 4]]
-append!(aux, holguras, eres, soluciones)
-aux2 = Solver.transpuesta(aux)
-println("$(aux)")
-println("$(aux2)")
 
-#prueba = Solver.getSolucion(test, false)
-#print(`$(prueba.ColumnaPivote)`)
-#solucion = Solver.maximizar(prueba)
-#final = join(solucion.Textual)
-#solucion = Solver.redondear(solution)
-#Output.escribirTablaIntermedia(solucion.Historial)
-#Output.escribirTablaFinal(solucion.Tabular)
-#Output.escribirSolucion(final)
-
+dosFases()

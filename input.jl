@@ -2,7 +2,7 @@ module Input
 
 function parseEntrada(path="entrada.txt")
     entrada = []
-    dos_fases = true
+    dos_fases::Bool
     for line in eachline(path)
         append!(entrada, [split(line, ',')])
     end
@@ -22,12 +22,21 @@ function parseEntrada(path="entrada.txt")
     holguras = agregarS(restricciones)
     coeficientes = sacarCoeficientes(restricciones)
 
-    append!(coeficientes, holguras, eres, [soluciones])
-    final = transpuesta(coeficientes)
-
     if isempty(eres)
         dos_fases = false
+        for i in eachindex(coeficientes)
+            coeficientes[i][1] = funcion_objetivo[i]
+        end
+
+    else
+        dos_fases = true
+        fila_objetivo::Vector{Int} = [0 for _ in 1:(length(restricciones)+1)]
+        fila_objetivo[1] = 1
+        pushfirst!(coeficientes, fila_objetivo)
     end
+
+    append!(coeficientes, holguras, eres, [soluciones])
+    final = transpuesta(coeficientes)
 
     return (dos_fases, funcion_objetivo, final)
 end
@@ -73,10 +82,6 @@ end
 function sacarCoeficientes(restricciones)
     last = length(restricciones) - 1
     result::Vector{Vector{Int}} = []
-
-    fila_objetivo::Vector{Int} = [0 for _ in 1:(length(restricciones)+1)]
-    fila_objetivo[1] = 1
-    push!(result, fila_objetivo)
 
     coeficientes = map((x) -> x[1:last], restricciones)
     trans = transpuesta(coeficientes)
