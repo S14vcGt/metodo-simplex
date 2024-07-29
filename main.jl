@@ -40,17 +40,17 @@ function datos_prueba()
         [0, 4, 3, -1, 0, 0, 1, 6],
         [0, 1, 2, 0, 1, 0, 0, 4]
     ]
-    return tabla5
+    return tabla
 end
-function dosFases()
-    solucion::Solver.Solucion
-    test::Tuple = Input.parseEntrada()
-    if !test[1]
-        prueba = Solver.getSolucion(test[3], test[2])
-        print(`$(prueba.ColumnaPivote)`)#todo quitar
+function simplex()
+    solucion = 0
+    #entrada::Tuple = Input.parseEntrada()
+    if true #!entrada[1]
+        prueba = Solver.getSolucion(datos_prueba(), true)#entrada[3],entrada[2]
+        #print(`$(prueba.ColumnaPivote)`)#todo quitar
         solucion = Solver.maximizar(prueba)
     else
-
+        solucion = dosFases(entrada)
     end
     final = join(solucion.Textual)
     #solucion = Solver.redondear(solution)#todo no necesario
@@ -59,4 +59,9 @@ function dosFases()
     Output.escribirSolucion(final)
 end
 
-dosFases()
+function dosFases(entrada)
+    prueba = Solver.getSolucion(tabla[3], entrada[2])
+    print(`$(prueba.ColumnaPivote)`)#todo quitar
+end
+
+simplex()

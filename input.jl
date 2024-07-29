@@ -2,15 +2,15 @@ module Input
 
 function parseEntrada(path="entrada.txt")
     entrada = []
-    dos_fases::Bool
-    maximizar::Bool
+    dos_fases = true
+    maximizar = nothing
 
     for line in eachline(path)
         append!(entrada, [split(line, ',')])
     end
     restricciones = map((x) ->
             map(y ->
-                    if y in ["=", ">=", "<="]
+                    if y in ["=", ">=", "<=", "MAX", "MIN"]
                         return y
                     else
                         return parse(Int, y)
@@ -22,7 +22,7 @@ function parseEntrada(path="entrada.txt")
     if op == "MAX"
         maximizar = true
     elseif op == "MIN"
-        maximizar == false
+        maximizar = false
     end
 
     soluciones = map(x -> popat!(x, lastindex(x)), restricciones)
@@ -42,15 +42,31 @@ function parseEntrada(path="entrada.txt")
     agregarColumnaObjetivo(coeficientes)
 
     append!(coeficientes, holguras, eres, [soluciones])
-    final = transpuesta(coeficientes)
+    final = normalizarNegativos(transpuesta(coeficientes), length(eres))
 
     return (dos_fases, maximizar, final, funcion_objetivo)
+end
+
+function normalizarNegativos(final, eres)
+    for _ in 1:eres
+        #! last todavia tiene que saber en que filas estan las eres para solo buscar alli
+        valor, columna = findmin(final[1])
+        fila = 0
+        for i in eachindex(final)
+            if final[i][columna] == 1
+                fila = i
+            end
+        end
+        newZ = final[1] + final[fila] * -valor
+        final[1] = newZ
+    end
+    return final
 end
 
 function agregarColumnaObjetivo(coeficientes)
 
     columnaObjetivo::Vector{Int} = [0 for _ in 1:(length(coeficientes[1]))]
-    fila_objetivo[1] = 1
+    columnaObjetivo[1] = 1
     pushfirst!(coeficientes, columnaObjetivo)
 
 end
@@ -94,6 +110,7 @@ function agregarS(restricciones)
     return resolve
 
 end
+
 function sacarCoeficientes(restricciones)
     last = length(restricciones) - 1
     result::Vector{Vector{Int}} = []
@@ -104,6 +121,7 @@ function sacarCoeficientes(restricciones)
 
     return result
 end
+
 function transpuesta(l)
     final = []
     for i in eachindex(l[1])
