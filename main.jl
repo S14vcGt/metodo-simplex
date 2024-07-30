@@ -48,7 +48,7 @@ function simplex()
     if !entrada[1]
         prueba = Solver.getSolucion(entrada[3], entrada[2])
         #print(`$(prueba.ColumnaPivote)`)#todo quitar
-        solucion = Solver.maximizar(prueba)
+        solucion = Solver.solve(prueba)
     else
         solucion = dosFases(entrada)
     end
@@ -60,7 +60,7 @@ function simplex()
 end
 
 function dosFases(entrada)
-    prueba = Solver.getSolucion(tabla[3], entrada[2])
+    prueba = Solver.getSolucion(tabla[3], false)
     print(`$(prueba.ColumnaPivote)`)#todo quitar
 end
 

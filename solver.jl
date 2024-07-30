@@ -5,16 +5,25 @@ struct Solucion
     Textual::Set{String}
     ColumnaPivote::Integer
     Historial::Set{Vector{Vector{Float64}}}
+    Maximizar::Bool
 end
 
 function getSolucion(table::Vector, maximizar::Bool, texto::Set{String}=Set(["Solución óptima"]), historial::Set=Set())
     fx = 0
     if maximizar
         fx = (x::Vector) -> argmin(x)
-    else #! todavia no sirve, se debe indagar sobre minimizacion con simplex
-        fx = (x::Vector) -> argmax(x[2:end]) + 1 # se le suma 1 porque no se toma en cuenta el indice de
+    else
+        fx = (x::Vector) -> argmax(x[2:end-1]) + 1 # se le suma 1 porque no se toma en cuenta el indice de
     end                                          # la columna de la funcion objetivo
-    return Solucion(table, texto, fx(table[1]), historial)
+    return Solucion(table, texto, fx(table[1]), historial, maximizar)
+end
+
+function CondicionOptimilidad(nextable::Vector, maximizar::Bool)
+    if maximizar
+        return minimum(nextable) < 0
+    else
+        return maximum(nextable) > 0
+    end
 end
 
 function obtenerFilaPivote(sol::Solucion)
@@ -35,7 +44,7 @@ function obtenerFilaPivote(sol::Solucion)
     return fila_pivote
 end
 
-function maximizar(sol::Solucion)
+function solve(sol::Solucion)
     global fila_pivote = obtenerFilaPivote(sol)
 
     if fila_pivote == 0
@@ -54,10 +63,10 @@ function maximizar(sol::Solucion)
     end
 
     # Se aplica la condición de optimalidad
-    if minimum(nextable[1]) < 0 #? esta funcion se puede pasar como un parametro
+    if CondicionOptimilidad(nextable[1], sol.Maximizar)
         push!(sol.Historial, nextable)
-        return maximizar(Solucion(nextable, sol.Textual, argmin(nextable[1]), sol.Historial)) #? esto se resuelve con getSolucion y
-    else                                                                                      #? se pasa el bool como parametro
+        return solve(getSolucion(nextable, sol.Maximizar, sol.Textual, sol.Historial))
+    else
         noBasicas = map((x) -> isNoBasic(x), transpuesta(nextable))
         for i in eachindex(nextable[1])
             if noBasicas[i] && nextable[1][i] == 0
@@ -69,16 +78,15 @@ function maximizar(sol::Solucion)
                     end
                     println("$(nextable ∉ sol.Historial)")
                     push!(sol.Historial, nextable)
-                    return maximizar(Solucion(nextable, sol.Textual, i, sol.Historial))
+                    return solve(Solucion(nextable, sol.Textual, i, sol.Historial, sol.Maximizar))
                 else
-                    return Solucion(nextable, sol.Textual, i, sol.Historial)
+                    return Solucion(nextable, sol.Textual, i, sol.Historial, sol.Maximizar)
                 end
-
             end
         end
 
         " múltiple." ∉ sol.Textual ? push!(sol.Textual, " única.") : 0
-        return Solucion(nextable, sol.Textual, sol.ColumnaPivote, sol.Historial)
+        return Solucion(nextable, sol.Textual, sol.ColumnaPivote, sol.Historial, sol.Maximizar)
     end
 end
 

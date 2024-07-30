@@ -41,15 +41,12 @@ function parseEntrada(path="entrada.txt")
     end
 
     agregarColumnaObjetivo(coeficientes)
-
     append!(coeficientes, holguras, eres, [soluciones])
-
     final = transpuesta(coeficientes)
-    if dos_fases
 
+    if dos_fases
         return (dos_fases, maximizar, normalizarEresNegativas(final, length(eres)), funcion_objetivo)
     else
-
         return (dos_fases, maximizar, final, funcion_objetivo)
     end
 end
