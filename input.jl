@@ -4,6 +4,7 @@ function parseEntrada(path="entrada.txt")
     entrada = []
     dos_fases = true
     maximizar = nothing
+    final = []
 
     for line in eachline(path)
         append!(entrada, [split(line, ',')])
@@ -30,7 +31,7 @@ function parseEntrada(path="entrada.txt")
 
     eres = agregarR(restricciones)
     holguras = agregarS(restricciones)
-    coeficientes = sacarCoeficientes(restricciones)
+    coeficientes = sacarCoeficientes(restricciones, length(funcion_objetivo))
 
     if isempty(eres)
         dos_fases = false
@@ -42,22 +43,28 @@ function parseEntrada(path="entrada.txt")
     agregarColumnaObjetivo(coeficientes)
 
     append!(coeficientes, holguras, eres, [soluciones])
-    final = normalizarNegativos(transpuesta(coeficientes), length(eres))
 
-    return (dos_fases, maximizar, final, funcion_objetivo)
+    final = transpuesta(coeficientes)
+    if dos_fases
+
+        return (dos_fases, maximizar, normalizarEresNegativas(final, length(eres)), funcion_objetivo)
+    else
+
+        return (dos_fases, maximizar, final, funcion_objetivo)
+    end
 end
 
-function normalizarNegativos(final, eres)
-    for _ in 1:eres
-        #! last todavia tiene que saber en que filas estan las eres para solo buscar alli
-        valor, columna = findmin(final[1])
+function normalizarEresNegativas(final, eres)
+    largo = length(final[1])
+    for index in 1:eres
+        columna = largo - index#? para normalizarVariablesNegativas tendria que se 2:largo+1
         fila = 0
         for i in eachindex(final)
             if final[i][columna] == 1
                 fila = i
             end
         end
-        newZ = final[1] + final[fila] * -valor
+        newZ = final[1] + final[fila]
         final[1] = newZ
     end
     return final
@@ -111,11 +118,10 @@ function agregarS(restricciones)
 
 end
 
-function sacarCoeficientes(restricciones)
-    last = length(restricciones) - 1
+function sacarCoeficientes(restricciones, variables)
     result::Vector{Vector{Int}} = []
 
-    coeficientes = map((x) -> x[1:last], restricciones)
+    coeficientes = map((x) -> x[1:variables], restricciones)
     trans = transpuesta(coeficientes)
     append!(result, map(x -> pushfirst!(x, 0), trans))
 

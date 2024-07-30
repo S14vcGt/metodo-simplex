@@ -44,9 +44,9 @@ function datos_prueba()
 end
 function simplex()
     solucion = 0
-    #entrada::Tuple = Input.parseEntrada()
-    if true #!entrada[1]
-        prueba = Solver.getSolucion(datos_prueba(), true)#entrada[3],entrada[2]
+    entrada::Tuple = Input.parseEntrada()
+    if !entrada[1]
+        prueba = Solver.getSolucion(entrada[3], entrada[2])
         #print(`$(prueba.ColumnaPivote)`)#todo quitar
         solucion = Solver.maximizar(prueba)
     else
