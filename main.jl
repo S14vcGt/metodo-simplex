@@ -4,12 +4,6 @@ include("input.jl")
 import .Solver, .Output, .Input
 
 # una interfaz de linea de comandos que le pregunte cual es la entrada
-#por terminal
-#por archivo csv
-
-#elija la salida
-#por terminal
-#en archivo csv
 
 function simplex()
     solucion = 0
@@ -17,7 +11,7 @@ function simplex()
     if !entrada[1]
         prueba = Solver.getSolucion(entrada[3], entrada[2])
         #print(`$(prueba.ColumnaPivote)`)#todo quitar
-        solucion = Solver.solve(prueba)
+        solucion = Solver.solve(prueba, false)
     else
         solucion = dosFases(entrada)
     end
@@ -29,8 +23,16 @@ function simplex()
 end
 
 function dosFases(entrada)
-    prueba = Solver.getSolucion(tabla[3], false)
+    prueba = Solver.getSolucion(entrada[3], false)
     print(`$(prueba.ColumnaPivote)`)#todo quitar
+    Output.escribirTablaFinal(prueba.Tabular)
+
+    fase1 = Solver.solve(prueba, true)
+
+    #completeHistorial = push!(fase1.Historial, fase1.Tabular)
+    #prueba = Solver.getSolucion(fase1.Tabular, entrada[2], completeHistorial)
+    #fase2 = Solver.solve(prueba,false)
+    return fase1
 end
 
 simplex()
