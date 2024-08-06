@@ -3,8 +3,7 @@ include("output.jl")
 include("input.jl")
 import .Solver, .Output, .Input
 
-# una interfaz de linea de comandos que le pregunte cual es la entrada
-
+# Una interfaz de línea de comandos que le pregunte cuál es la entrada
 function simplex()
     solucion = 0
     entrada::Tuple = Input.parseEntrada()
@@ -24,6 +23,7 @@ function simplex()
     Output.escribirTablaIntermedia(solucion.Historial)
     Output.escribirTablaFinal(solucion.Tabular)
     Output.escribirSolucion(final)
+    Output.escribirValoresVariables(solucion.Tabular)
 end
 
 function dosFases(entrada)
