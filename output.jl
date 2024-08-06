@@ -9,7 +9,6 @@ end
 
 function escribirTablaFinal(sol::Vector{Vector{Float64}})
     mat = hcat(sol...)'
-    #println(mat)
     df = DataFrame(Z=mat[1:4, 1], X1=mat[1:4, 2], X2=mat[1:4, 3], X3=mat[1:4, 4], S1=mat[1:4, 5], S2=mat[1:4, 6], S3=mat[1:4, 7], Solucion=mat[1:4, 8])
     printstyled("\n La tabla final es:\n"; color=:cyan, bold=true)
     show(df, allrows=true, allcols=true)
@@ -18,13 +17,13 @@ end
 function escribirValoresVariables(sol::Vector{Vector{Float64}})
     mat = hcat(sol...)'
     df = DataFrame(mat, :auto)
-    
+
     # Nombres de las variables hardcodeados
     variables = ["Z", "x1", "s2", "x3"]
-    
+
     # Extraer los valores finales de las variables
     final_values = [df[i, end] for i in 1:length(variables)]
-    
+
     println("\nValores de las variables:")
     for (var, val) in zip(variables, final_values)
         printstyled("\n $var: ", color=:magenta, bold=true)
@@ -36,13 +35,13 @@ end
 function escribirValoresVariables(sol::Vector{Vector{Float64}})
     mat = hcat(sol...)'
     df = DataFrame(mat, :auto)
-    
+
     # Nombres de las variables hardcodeados
     variables = ["Z", "x1", "s2", "x3"]
-    
+
     # Extraer los valores finales de las variables
     final_values = [df[i, end] for i in 1:length(variables)]
-    
+
     println("\nValores de las variables:")
     for (var, val) in zip(variables, final_values)
         printstyled("\n $var: ", color=:magenta, bold=true)
