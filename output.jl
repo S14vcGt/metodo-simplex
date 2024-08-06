@@ -1,25 +1,27 @@
 module Output
 
+using DataFrames
+
 function escribirSolucion(sol::String)
     printstyled("\n $sol \n"; color=:light_green, bold=true)
 end
 
-function escribirTablaFinal(sol::Vector)
+function escribirTablaFinal(sol::Vector{Vector{Float64}})
+    mat = hcat(sol...)'
+    df = DataFrame(mat, :auto)
     printstyled("\n La tabla final es:\n"; color=:cyan, bold=true)
-    for i in eachindex(sol)
-        printstyled("$(round.(sol[i],digits=4))\n"; color=:light_cyan)
-    end
+    show(df, allrows=true, allcols=true)
 end
 
-function escribirTablaIntermedia(tablas::Vector)
+function escribirTablaIntermedia(tablas::Vector{Vector{Vector{Float64}}})
     foreach((tabla) -> escribirVector(tabla), tablas)
 end
 
-function escribirVector(tabla::Vector)
-    for i in eachindex(tabla)
-        printstyled("$(round.(tabla[i],digits=4))\n"; color=:light_blue)
-    end
-    print("\n")
+function escribirVector(tabla::Vector{Vector{Float64}})
+    mat = hcat(tabla...)'
+    df = DataFrame(mat, :auto)
+    show(df, allrows=true, allcols=true)
+    println("\n")
 end
 
 end
