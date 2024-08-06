@@ -1,6 +1,35 @@
 module Input
 
-function parseEntrada(path="entrada.txt")
+function parseTabla(fase1, numEres, funcion_objetivo)
+    foreach(x -> for i in 1:numEres
+            popat!(x, lastindex(x) - i)
+
+        end, fase1)
+
+    largo = lastindex(funcion_objetivo) + 1
+    for i in 2:largo
+        fase1[1][i] = -funcion_objetivo[i-1]
+    end
+
+    normalizarVarNegativas(fase1, largo - 1)
+
+end
+
+function normalizarVarNegativas(tabla, numVariables)
+    for index in 2:(numVariables+1)
+        fila = 0
+        for i in eachindex(tabla)
+            if tabla[i][index] == 1
+                fila = i
+            end
+        end
+        newZ = tabla[1] + tabla[fila] * -tabla[1][fila]
+        tabla[1] = newZ
+    end
+end
+
+function parseEntrada(path="entradaFinal.txt")
+
     entrada = []
     dos_fases = true
     maximizar = nothing
@@ -45,16 +74,17 @@ function parseEntrada(path="entrada.txt")
     final = transpuesta(coeficientes)
 
     if dos_fases
-        return (dos_fases, maximizar, normalizarEresNegativas(final, length(eres)), funcion_objetivo)
+        numEres = length(eres)
+        return (dos_fases, maximizar, normalizarEresNegativas(final, numEres), funcion_objetivo, numEres)
     else
         return (dos_fases, maximizar, final, funcion_objetivo)
     end
 end
 
 function normalizarEresNegativas(final, eres)
-    largo = length(final[1])
+    last = lastindex(final[1])
     for index in 1:eres
-        columna = largo - index#? para normalizarVariablesNegativas tendria que se 2:largo+1
+        columna = last - index#? para normalizarVariablesNegativas tendria que se 2:eres+1
         fila = 0
         for i in eachindex(final)
             if final[i][columna] == 1
