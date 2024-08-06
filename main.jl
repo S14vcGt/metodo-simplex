@@ -29,7 +29,6 @@ end
 function dosFases(entrada)
     prueba = Solver.getSolucion(entrada[3], false)
     fase1 = Solver.solve(prueba, true, lastindex(entrada[4]))
-    Output.escribirTablaFinal(fase1.Tabular)
 
     completeHistorial = push!(fase1.Historial, fase1.Tabular)
     Input.parseTabla(fase1.Tabular, entrada[5], entrada[4])

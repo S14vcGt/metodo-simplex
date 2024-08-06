@@ -18,7 +18,8 @@ function escribirTablaIntermedia(tablas::Vector{Vector{Vector{Float64}}})
 end
 
 function escribirVector(tabla::Vector{Vector{Float64}})
-    mat = hcat(tabla...)'
+    aux = map(x -> round.(x, digits=4), tabla)
+    mat = hcat(aux...)'
     df = DataFrame(mat, :auto)
     show(df, allrows=true, allcols=true)
     println("\n")
