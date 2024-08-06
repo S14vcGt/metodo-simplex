@@ -21,7 +21,8 @@ function simplex()
     end
     final = join(solucion.Textual)
 
-    Output.escribirTablaIntermedia(solucion.Historial)
+
+    Output.escribirTablaIntermedia(solucion.Historial, lastindex(entrada[4]))
     Output.escribirTablaFinal(solucion.Tabular)
     Output.escribirSolucion(final)
 end
