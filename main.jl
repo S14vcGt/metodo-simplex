@@ -3,7 +3,7 @@ include("output.jl")
 include("input.jl")
 import .Solver, .Output, .Input
 
-# Una interfaz de línea de comandos que le pregunte cuál es la entrada
+#todo Una interfaz de línea de comandos que le pregunte cuál es la entrada
 function simplex()
     solucion = 0
     entrada::Tuple = Input.parseEntrada()
